@@ -4,3 +4,18 @@ Dart base 56 library for converting base10 (and base 8) numbers to / from base 5
 IDs can be made HTML safe through the addition of prepended strings, which also serves expanding or classifying IDs that might need to be found and operated on by functions where type matters but checking type is slower than you'd like.
 
 Just drop into src in your dart project and reference.  It should work in most dart and flutter projects.
+
+## Example
+import 'lib/bX.dart';
+
+void main() {
+   final bxValue = "z";
+   final b10Value = B10.convertBxToB10(bxValue);
+   print(b10Value);
+   final bxValueBack = B10.convertB10ToBx(b10Value);
+   print(bxValue);
+}
+
+~$ dart convert.dart
+55
+z
