@@ -6,16 +6,16 @@ IDs can be made HTML safe through the addition of prepended strings, which also 
 Just drop into src in your dart project and reference.  It should work in most dart and flutter projects.
 
 ## Example
-import 'lib/bX.dart';
+	import 'lib/bX.dart';
 
-void main() {
-   final bxValue = "z";
-   final b10Value = B10.convertBxToB10(bxValue);
-   print(b10Value);
-   final bxValueBack = B10.convertB10ToBx(b10Value);
-   print(bxValue);
-}
+	void main() {
+		final bxValue = "z";
+ 		final b10Value = B10.convertBxToB10(bxValue);
+		print(b10Value);
+		final bxValueBack = B10.convertB10ToBx(b10Value);
+		print(bxValue);
+	}
 
-~$ dart convert.dart
-55
-z
+	~$ dart convert.dart
+	55
+	z
