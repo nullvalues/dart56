@@ -1,8 +1,6 @@
-// File: test/bx_test.dart
-import 'dart:io';
-
 import 'package:test/test.dart';
 import 'package:dart56/bX.dart';
+import 'dart:io';
 
 void main() {
   group('B10 Tests', () {
@@ -50,6 +48,11 @@ void main() {
       expect(joined.contains('.'), isTrue);
       expect(joined.split('.')[1], equals('child'));
     });
+
+    test('increments bX values correctly', () {
+      expect(B10.incrementBxValue('z'), equals('10')); // z (55) + 1 = 56 = '10' in bx
+      expect(B10.incrementBxValue('y'), equals('z'));  // y (54) + 1 = 55 = 'z' in bx
+    });
   });
 
   group('B8 Tests', () {
@@ -73,17 +76,15 @@ void main() {
 
   group('BxSequence Tests', () {
     late BxSequence sequence;
-    late String dbPath;
 
     setUp(() {
       sequence = BxSequence('test_sequence');
-      dbPath = 'sequences.db';
     });
 
     tearDown(() {
       sequence.dispose();
       try {
-        final file = File(dbPath);
+        final file = File('sequences.db');
         if (file.existsSync()) {
           file.deleteSync();
         }

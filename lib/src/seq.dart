@@ -1,3 +1,4 @@
+// File: lib/src/seq.dart
 import 'package:sqlite3/sqlite3.dart';
 import '../config_api.dart';
 import 'b10.dart';

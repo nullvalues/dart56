@@ -46,6 +46,24 @@ class B10 {
     return value;
   }
 
+  static String incrementBxValue(String bxValue) {
+    // Extract prepend if it exists
+    final separator = Bootstrap.apiConfig['bX']['prependSeparator'];
+    var prepend = '';
+    var valueToIncrement = bxValue;
+
+    if (bxValue.contains(separator)) {
+      final parts = bxValue.split(separator);
+      prepend = parts[0];
+      valueToIncrement = parts[1];
+    }
+
+    final b10Value = convertBxToB10(valueToIncrement);
+    final incremented = convertB10ToBx(b10Value + 1);
+
+    return prepend.isEmpty ? incremented : '$prepend$separator$incremented';
+  }
+
   static int convertBxToB10(String bxValue) {
     final separator = Bootstrap.apiConfig['bX']['prependSeparator'];
     var valueToConvert = bxValue;
