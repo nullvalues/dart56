@@ -1,18 +1,14 @@
 import 'b10.dart';
 
 class B8 {
-
-  static String convertB8ToBx(Base8Int b8Value) {
+  static String convertB8ToBx(Base8Int b8Value, {String? prepend, bool useDefaultPrepend = false}) {
     final int b10value = b8Value.toDecimal();
-    return B10.convertB10ToBx(b10value);
+    return B10.convertB10ToBx(b10value, prepend: prepend, useDefaultPrepend: useDefaultPrepend);
   }
 
   static Base8Int convertBxToB8(String bxValue) {
     final int b10Value = B10.convertBxToB10(bxValue);
     return Base8Int.fromInt(b10Value);
-    //without the custom Base8Int type we have to do this every time which is probably more error prone
-    // while throwing hard to understand errors for ints (like 12) that are both valid b10 and b8
-    //return int.parse(b10Value.toRadixString(8), radix: 8);
   }
 }
 

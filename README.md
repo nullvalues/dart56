@@ -1,21 +1,47 @@
 # dart56
-Dart base 56 library for converting base10 (and base 8) numbers to / from base 56 for use as small, readable and usually HTML-ID safe sequences.  Base 56 is arbitary, as the character set can be shrunk or expanded in the library as a configuration setting.  Base56 is handy because it ecludes OILoil from the set which can be mistaken for zeros and ones.
+Dart base 56 library for converting base10 (and base 8) numbers to / from base 56 for use as small, readable and usually HTML-ID safe sequences. Base 56 is arbitrary, as the character set can be shrunk or expanded in the library as a configuration setting. Base56 is handy because it excludes OILoil from the set which can be mistaken for zeros and ones.
 
-IDs can be made HTML safe through the addition of prepended strings, which also serves expanding or classifying IDs that might need to be found and operated on by functions where type matters but checking type is slower than you'd like.
+## Installation
+```bash
+dart pub get
+```
 
-Just drop into src in your dart project and reference.  It should work in most dart and flutter projects.
-
-## Example
+## Example Usage (also see convert.dart for more complete usage)
+```dart
 import 'lib/bX.dart';
 
 void main() {
    final bxValue = "z";
    final b10Value = B10.convertBxToB10(bxValue);
-   print(b10Value);
+   print(b10Value);  // Outputs: 55
+   
    final bxValueBack = B10.convertB10ToBx(b10Value);
-   print(bxValue);
+   print(bxValue);   // Outputs: z
 }
+```
 
-~$ dart convert.dart
-55
-z
+## Running Tests
+Tests are located in the `test` directory and follow the naming convention `*_test.dart`.
+
+Run all tests:
+```bash
+dart test
+```
+
+Run a specific test file:
+```bash
+dart test test/bx_test.dart
+```
+
+Run tests with coverage:
+```bash
+dart test --coverage=coverage
+dart run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --packages=.packages --report-on=lib
+```
+
+## Contributing
+1. Fork the repository
+2. Create your feature branch
+3. Add tests for any new functionality
+4. Ensure all tests pass
+5. Submit a pull request

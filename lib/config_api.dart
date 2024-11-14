@@ -6,7 +6,11 @@ class Bootstrap {
 
   final Map<String, dynamic> _apiConfigObjects = {
     "bX": {
-      "removeChars": "OILoil"
+      "removeChars": "OILoil",
+      "prependSeparator": "-",
+      "prependDefaultChar": "X",
+      "subdomainChar": ".",
+      "seqStartValue": "A0"
     }
   };
 
