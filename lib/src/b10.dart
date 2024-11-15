@@ -18,6 +18,10 @@ class B10 {
 
   static String convertB10ToBx(int b10Value,
       {String? prepend, bool useDefaultPrepend = false}) {
+    if (b10Value < 0) {
+      throw ArgumentError('Cannot convert negative values');
+    }
+
     if (b10Value == 0) {
       final baseValue = _baseChars[0].$1;
       return _addPrepend(baseValue, prepend, useDefaultPrepend);
@@ -25,10 +29,12 @@ class B10 {
 
     final baseSize = _baseChars.length;
     var result = '';
-    while (b10Value > 0) {
-      final remainder = b10Value % baseSize;
+    var value = b10Value;
+
+    while (value > 0) {
+      final remainder = value % baseSize;
       result = _baseChars[remainder].$1 + result;
-      b10Value ~/= baseSize;
+      value ~/= baseSize;
     }
 
     return _addPrepend(result, prepend, useDefaultPrepend);
@@ -46,59 +52,111 @@ class B10 {
     return value;
   }
 
-  static String incrementBxValue(String bxValue) {
-    // Extract prepend if it exists
-    final separator = Bootstrap.apiConfig['bX']['prependSeparator'];
-    var prepend = '';
-    var valueToIncrement = bxValue;
-
-    if (bxValue.contains(separator)) {
-      final parts = bxValue.split(separator);
-      prepend = parts[0];
-      valueToIncrement = parts[1];
+  static List<List<int>> convertBxToB10(String bxValue) {
+    if (bxValue.isEmpty) {
+      return [[]];
     }
 
-    final b10Value = convertBxToB10(valueToIncrement);
-    final incremented = convertB10ToBx(b10Value + 1);
-
-    return prepend.isEmpty ? incremented : '$prepend$separator$incremented';
-  }
-
-  static int convertBxToB10(String bxValue) {
     final separator = Bootstrap.apiConfig['bX']['prependSeparator'];
+    final subdomainChar = Bootstrap.apiConfig['bX']['subdomainChar'];
     var valueToConvert = bxValue;
 
     // Strip prepend if present
     if (bxValue.contains(separator)) {
-      valueToConvert = bxValue.split(separator).last;
+      final parts = bxValue.split(separator);
+      if (parts.length != 2) {
+        return [[]];  // Invalid prepend format
+      }
+      valueToConvert = parts[1];
+    }
+
+    // Handle subdomain recursion
+    if (valueToConvert.contains(subdomainChar)) {
+      final parts = valueToConvert.split(subdomainChar);
+      if (parts.any((part) => part.isEmpty)) {
+        return List.generate(parts.length, (_) => []);  // Invalid empty parts
+      }
+      return parts.map((part) => _convertSingleBxToB10(part)).toList();
+    }
+
+    return [_convertSingleBxToB10(valueToConvert)];
+  }
+
+  static List<int> _convertSingleBxToB10(String bxValue) {
+    if (bxValue.isEmpty) {
+      return [];
     }
 
     final baseSize = _baseChars.length;
-    final baseMap =
-        Map.fromEntries(_baseChars.map((e) => MapEntry(e.$1, e.$2)));
+    final baseMap = Map.fromEntries(_baseChars.map((e) => MapEntry(e.$1, e.$2)));
 
     var result = 0;
-    for (var i = 0; i < valueToConvert.length; i++) {
-      final char = valueToConvert[valueToConvert.length - 1 - i];
-      if (!baseMap.containsKey(char)) {
-        throw FormatException('Invalid character in input: $char');
+    try {
+      for (var i = 0; i < bxValue.length; i++) {
+        final char = bxValue[bxValue.length - 1 - i];
+        if (!baseMap.containsKey(char)) {
+          return [];  // Invalid character
+        }
+        result += baseMap[char]! * pow(baseSize, i).toInt();
       }
-      result += baseMap[char]! * pow(baseSize, i).toInt();
+      return [result];
+    } catch (e) {
+      return [];  // Handle any other errors
     }
-    return result;
+  }
+
+  static String? incrementBxValue(String bxValue) {
+    final separator = Bootstrap.apiConfig['bX']['prependSeparator'];
+    var prepend = '';
+    var valueToIncrement = bxValue;
+
+    // Handle prepend
+    if (bxValue.contains(separator)) {
+      final parts = bxValue.split(separator);
+      if (parts.length != 2) {
+        return null;  // Invalid prepend format
+      }
+      prepend = parts[0];
+      valueToIncrement = parts[1];
+    }
+
+    // Convert and increment
+    final converted = convertBxToB10(valueToIncrement);
+    if (converted.isEmpty || converted[0].isEmpty) {
+      return null;  // Invalid conversion
+    }
+
+    try {
+      final incremented = convertB10ToBx(converted[0][0] + 1);
+      return prepend.isEmpty ? incremented : '$prepend$separator$incremented';
+    } catch (e) {
+      return null;  // Handle any conversion errors
+    }
   }
 
   static String joinBxValues(String value, {String? parent}) {
     final separator = Bootstrap.apiConfig['bX']['subdomainChar'];
     final actualParent = parent ?? generateRandomBxValue(2, forceLetterFirst: true);
+
+    // Validate both parts
+    final parentConverted = convertBxToB10(actualParent);
+    final valueConverted = convertBxToB10(value);
+
+    if (parentConverted.isEmpty || parentConverted[0].isEmpty ||
+        valueConverted.isEmpty || valueConverted[0].isEmpty) {
+      throw ArgumentError('Invalid bX values for joining');
+    }
+
     return '$actualParent$separator$value';
   }
 
   static String generateRandomBxValue(int width,
       {String? prepend,
-      bool useDefaultPrepend = false,
-      bool forceLetterFirst = false}) {
-    if (width <= 0) throw ArgumentError('Width must be greater than 0');
+        bool useDefaultPrepend = false,
+        bool forceLetterFirst = false}) {
+    if (width <= 0) {
+      throw ArgumentError('Width must be greater than 0');
+    }
 
     final baseSize = _baseChars.length;
     final maxValue = pow(baseSize, width).toInt() - 1;
@@ -113,10 +171,27 @@ class B10 {
       if (!forceLetterFirst) break;
 
       final valueToCheck =
-          result.contains('-') ? result.split('-').last : result;
-      if (valueToCheck[0].toLowerCase() != valueToCheck[0].toUpperCase()) break;
+      result.contains(Bootstrap.apiConfig['bX']['prependSeparator'])
+          ? result.split(Bootstrap.apiConfig['bX']['prependSeparator']).last
+          : result;
+
+      if (_isLetter(valueToCheck[0])) break;
     } while (true);
 
     return result;
+  }
+
+  static bool _isLetter(String char) {
+    return char.toLowerCase() != char.toUpperCase();
+  }
+
+  // Utility methods for validation
+  static bool isValidBxChar(String char) {
+    return _baseChars.any((tuple) => tuple.$1 == char);
+  }
+
+  static bool isValidBxValue(String value) {
+    final converted = convertBxToB10(value);
+    return converted.isNotEmpty && converted[0].isNotEmpty;
   }
 }

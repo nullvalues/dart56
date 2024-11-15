@@ -14,11 +14,12 @@ import 'lib/bX.dart';
 
 void main() {
    final bxValue = "z";
+   // the return value is a list with one or more lists that contain 0 or 1 ints
    final b10Value = B10.convertBxToB10(bxValue);
-   print(b10Value);  // Outputs: 55
-   
+   print(b10Value[0][0]);  // Outputs: 55
    final bxValueBack = B10.convertB10ToBx(b10Value);
    print(bxValue);   // Outputs: z
+   
 }
 ```
 

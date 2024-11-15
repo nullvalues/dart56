@@ -1,3 +1,4 @@
+// Modified b8.dart
 import 'b10.dart';
 
 class B8 {
@@ -6,12 +7,16 @@ class B8 {
     return B10.convertB10ToBx(b10value, prepend: prepend, useDefaultPrepend: useDefaultPrepend);
   }
 
-  static Base8Int convertBxToB8(String bxValue) {
-    final int b10Value = B10.convertBxToB10(bxValue);
-    return Base8Int.fromInt(b10Value);
+  static List<List<Base8Int>> convertBxToB8(String bxValue) {
+    final b10Values = B10.convertBxToB10(bxValue);
+    return b10Values.map((subList) =>
+    subList.isEmpty ? <Base8Int>[] :
+    [Base8Int.fromInt(subList[0])]
+    ).toList();
   }
 }
 
+// Base8Int class remains unchanged
 class Base8Int {
   final int value;
 
@@ -49,7 +54,6 @@ class Base8Int {
               runtimeType == other.runtimeType &&
               value == other.value;
 
-  // Override hashCode
   @override
   int get hashCode => value.hashCode;
 }
