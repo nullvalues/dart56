@@ -1,4 +1,3 @@
-// Modified b8.dart
 import 'b10.dart';
 
 class B8 {
@@ -10,13 +9,12 @@ class B8 {
   static List<List<Base8Int>> convertBxToB8(String bxValue) {
     final b10Values = B10.convertBxToB10(bxValue);
     return b10Values.map((subList) =>
-    subList.isEmpty ? <Base8Int>[] :
-    [Base8Int.fromInt(subList[0])]
+        subList.isEmpty ? <Base8Int>[] :
+        [Base8Int.fromInt(subList[0])]
     ).toList();
   }
 }
 
-// Base8Int class remains unchanged
 class Base8Int {
   final int value;
 
