@@ -1,13 +1,14 @@
 name: dart56
-description: Base 56 library for converting base10 and base8 numbers to/from base56 for readable and HTML-ID safe sequences
+description: Base 56 library for converting base10 (and base 8) numbers to / from base 56
 version: 1.0.0
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  meta: ^1.9.1
   sqlite3: ^2.1.0
 
 dev_dependencies:
   lints: ^5.0.0
-  test: ^1.24.0
+  test: ^1.16.0
