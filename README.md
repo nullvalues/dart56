@@ -1,7 +1,7 @@
 # dart56
 Dart base 56 library for converting base10 (and base 8) numbers to / from base 56 for use as small, readable and usually HTML-ID safe sequences. 
 
-Base 56 is arbitrary, as the character set can be shrunk or expanded in the library as a configuration setting, but Base56 is handy because it users just letters and numbers while excluding OILoil from the set which can be mistaken for zeros and ones.
+Base 56 is arbitrary, as the character set can be shrunk or expanded in the library as a configuration setting, but Base56 is handy because it uses just letters and numbers while excluding OILoil from the set which can be mistaken for zeros and ones.
 
 ## Installation
 ```bash
